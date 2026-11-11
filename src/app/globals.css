@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/*
+ * 原站用的是 Tailwind 3 的默认字体栈（ui-sans-serif, system-ui 打头）。
+ * Tailwind 4.3 改了默认值，Windows 上英文会换成更窄的 Segoe UI，这里改回去。
+ */
+@theme {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* 首屏内容依次浮现（轻微上移 + 淡入），只在用户未要求减少动效时使用 */
+  --animate-rise: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 0.75rem;
+    }
+  }
+}
+
+/* 不加载 daisyUI 内置主题，只用下面这一套 */
+@plugin "daisyui" {
+  themes: false;
+}
+
+/*
+ * 还原 lzz.moe 原站使用的旧版 valentine 配色（daisyUI 3）。
+ * daisyUI 5 自带的 valentine 颜色已经变了，所以这里手动写一份。
+ */
+@plugin "daisyui/theme" {
+  name: "valentine";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  --color-base-100: hsl(318 46% 89%);
+  --color-base-200: hsl(318 46% 82%);
+  --color-base-300: hsl(318 46% 75%);
+  --color-base-content: hsl(344 38% 28%);
+  --color-primary: hsl(353 74% 67%);
+  --color-primary-content: hsl(356 26% 14%);
+  --color-secondary: hsl(254 86% 77%);
+  --color-secondary-content: hsl(256 20% 15%);
+  --color-accent: hsl(181 56% 70%);
+  --color-accent-content: hsl(181 16% 15%);
+  --color-neutral: hsl(336 43% 48%);
+  --color-neutral-content: hsl(318 46% 89%);
+  --color-info: hsl(221 83% 53%);
+  --color-info-content: hsl(239 85% 93%);
+  --color-success: hsl(142 76% 36%);
+  --color-success-content: hsl(126 38% 89%);
+  --color-warning: hsl(32 95% 44%);
+  --color-warning-content: hsl(29 59% 11%);
+  --color-error: hsl(0 72% 51%);
+  --color-error-content: hsl(11 100% 91%);
+
+  --radius-selector: 1.9rem;
+  --radius-field: 1.9rem;
+  --radius-box: 1rem;
+  /* 原站按钮高 3rem（daisyUI 5 默认 2.5rem） */
+  --size-selector: 0.25rem;
+  --size-field: 0.3rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* 选中文字时用主题粉，而不是浏览器默认的蓝色 */
+::selection {
+  background-color: color-mix(in oklab, var(--color-primary) 35%, transparent);
+}
+
+/* 菜单项尺寸按原站（daisyUI 3）还原：内边距 8px 16px、行高 20px */
+@utility menu-classic {
+  line-height: 1.25rem;
+
+  & :where(li > a, li > button, li > details > summary) {
+    padding: 0.5rem 1rem;
+  }
+
+  /* 手机上横向空间不够，左右内边距收一点，避免挤到 Logo 换行 */
+  @media (width < 640px) {
+    & :where(li > a, li > button, li > details > summary) {
+      padding-inline: 0.75rem;
+    }
+  }
+}
+
+/*
+ * 首页背景：浅色蒙版 + 插画，窄屏（< 800px）换竖版图，与原站一致。
+ * 蒙版从中性灰改为带一点主题粉的浅色，插画不再发灰；
+ * 中间再叠一层柔光，托住文字，四周则稍微多透出一点插画。
+ */
+@utility hero-bg {
+  --hero-veil: hsl(322 38% 93% / 0.7);
+  --hero-glow: radial-gradient(
+    ellipse 55% 50% at 50% 50%,
+    hsl(318 60% 97% / 0.6),
+    hsl(318 60% 97% / 0) 72%
+  );
+  background-image:
+    var(--hero-glow),
+    linear-gradient(var(--hero-veil), var(--hero-veil)),
+    url("/pcbackground.jpg");
+
+  @media (width < 800px) {
+    --hero-glow: radial-gradient(
+      ellipse 85% 45% at 50% 50%,
+      hsl(318 60% 97% / 0.6),
+      hsl(318 60% 97% / 0) 75%
+    );
+    background-image:
+      var(--hero-glow),
+      linear-gradient(var(--hero-veil), var(--hero-veil)),
+      url("/mobilebackground.jpg");
+  }
+}
